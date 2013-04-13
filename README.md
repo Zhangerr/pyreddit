@@ -1,7 +1,7 @@
 pyreddit
 ========
 
-my own spin on the reddit api in python
+my own spin on the reddit api in python (just practice)
 
 initialize the api by creating a new Reddit object:
 ```python
