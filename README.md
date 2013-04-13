@@ -17,6 +17,7 @@ you can select a subreddit which you want to manipulate, optionally specifying t
 sr = r.getSubreddit("askscience","new")
 ```
 *NOTE: everytime you call getSubreddit a new object is created and thus when you call getLinks() on that subreddit it re-downloads data from the web, so if you want to store the state of the subreddit assign it to a variable*
+
 you can then get all the front page links with getLinks (note that only the first page is supported for now)
 ```python
 links = sr.getLinks()
