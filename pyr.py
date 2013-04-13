@@ -60,22 +60,6 @@ class Subreddit:
 				data = i['data']
 				self.links.append(Link(data))
 		return self.links
-"""class Link:
-	def __init__(self,author,title,url,id):
-		self.author = author
-		self.url = url
-		self.id = id
-		self.title = title
-	def comment(self,text):		
-		data = {'thing_id': thread,'text':text,'uh':modhash}
-		r=post('http://www.reddit.com/api/comment',data,)
-		print r.json()
-"""		
-#class Comment:
-#	def __init__(self,author,id,text):
-#		self.author = author
-#		self.id = id
-#		self.text = text
 class Reddit:			
 	def login(self,u,p):
 		global modhash # needed to modify it, not needed to read
