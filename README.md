@@ -1,7 +1,9 @@
 pyreddit
 ========
 
-my own spin on the reddit api in python (just practice)
+my own spin on the reddit api in python (just practice), I don't think it'll ever be anywhere close to PRAW
+
+**YOU MUST HAVE THE PYTHON PACKAGE [REQUESTS](http://docs.python-requests.org/en/latest/) TO USE THIS LIBRARY**
 
 initialize the api by creating a new Reddit object:
 ```python
