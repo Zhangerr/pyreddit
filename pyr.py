@@ -1,10 +1,12 @@
 #!/usr/bin/python
 #add unit tests? 
+#consider splitting into multiple files based on class-- use import config trick for globals
+
 import requests
 import pdb
 import HTMLParser
 client = requests.session()
-headers={'User-Agent':'akun bot'}
+headers={}
 modhash = ''
 def isloggedin():
 	if len(modhash) == 0:
@@ -28,39 +30,57 @@ class AttributeDict(dict):
 		self[attr] = value
 
 def post(url,data):
-	return client.post(url,data=data,headers=headers) # make sure to use named args)
+	return client.post(url,data=data,headers=headers) # make sure to use named args
 
 class Link(AttributeDict): # http://stackoverflow.com/questions/4984647/accessing-dict-keys-like-an-attribute-in-python attribute dictionary
-	def __init__(self,*args,**kwargs):
+	def __init__(self,unescaped = True,*args,**kwargs):
 		super(Link,self).__init__(*args,**kwargs)
 		self.comments = []
-
-	def getComments(self):
-		if len(self.comments) == 0:
-			js = client.get("http://reddit.com" + self['permalink'] + ".json").json()
-			parse = HTMLParser.HTMLParser()
-			for i in js[1]['data']['children']:	
+		js = client.get("http://reddit.com" + self['permalink'] + ".json").json()
+		parse = HTMLParser.HTMLParser()
+		for i in js[1]['data']['children']:	
+			if unescaped:
 				i['data']['body_html'] = parse.unescape(i['data']['body_html'])
-				self.comments.append(Comment(i['data']))
+			self.comments.append(Comment(i['data']))
+	def __repr__(self):
+		return "link: %s" % self.title
+		
+	def getComments(self):
 		return self.comments
 		
 class Comment(AttributeDict):	
-	pass
+	def __repr__(self):
+		return 'comment' #todo, add parent link or comment content
 
 class Subreddit:
-	def __init__(self, name, sort):		
-		self.links = []
+	def __init__(self, name, sort):				
 		self.name = name
-		self.sort = sort
-			#links.append(Link(data['author'],data['title'],data['url'],data['name']))
+		self.sort = sort			
+		self.refresh()
 	def getLinks(self):
-		if len(self.links) == 0:
-			js = client.get("http://reddit.com/r/" + self.name + "/"  + self.sort + "/.json").json() 		
-			for i in js['data']['children']:
-				data = i['data']
-				self.links.append(Link(data))
 		return self.links
+
+	#should both return new subreddit objects or modify the current? add pages object?	
+	def getNextPage(self):
+		pass
+	def getPrevPage(self):
+		pass
+	def __repr__(self):
+		return "subreddit: %s" % self.name		
+	def refresh(self):
+		self.links = []
+		js = client.get("http://reddit.com/r/%s/%s/.json" % (self.name,self.sort)).json() 		
+		self.after = js['data']['after']
+		self.before = js['data']['before']
+		for i in js['data']['children']:
+			data = i['data']
+			#print data
+			self.links.append(Link(True,data))		
+#note to self, perhaps make generators instead of lists for results, could be more efficient, that is, function with yield
 class Reddit:			
+	def __init__(self,ua="default"):
+		global headers
+		headers={'User-Agent':ua}
 	def login(self,u,p):
 		global modhash # needed to modify it, not needed to read
 		self.user = u
@@ -69,8 +89,7 @@ class Reddit:
 		r=post('https://ssl.reddit.com/api/login',data)
 		modhash = r.json()['json']['data']['modhash']
 		print modhash
-	
+	def getRandom(self):
+		pass
 	def getSubreddit(self,name, sort="hot"):
 		return Subreddit(name,sort)
-
-		
