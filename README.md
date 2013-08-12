@@ -1,6 +1,7 @@
 pyreddit
 ========
-
+TODO: make async maybe? don't request for object from network immediately until some get() function is called (get has an option to refresh or use cache),
+comments should have child attribute with moer comment objects instead of just a bunch of data lol
 my own spin on the reddit api in python (just practice), I don't think it'll ever be anywhere close to PRAW
 
 **YOU MUST HAVE THE PYTHON PACKAGE [REQUESTS](http://docs.python-requests.org/en/latest/) TO USE THIS LIBRARY**
